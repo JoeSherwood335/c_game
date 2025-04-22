@@ -1,10 +1,13 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "utilities.h"
 #include "network.h"
 #include "gameVars.h"
 #include "gameRoom.h"
 #include "gamePlayer.h"
+
+
 int main() {
 
   g_room *room1, *room2;

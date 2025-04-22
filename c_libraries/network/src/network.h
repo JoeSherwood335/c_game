@@ -40,4 +40,4 @@ int RecieveMessage(int, void *,  unsigned int);
 /// @param ipaddress ip address of remote server example 127.0.0.1
 /// @param server_port_number Remote network port number 
 /// @return status of connection
-int Client_Connect(int *, const char *, int); 
+int Client_Connect(int *, char *, int); 

@@ -33,6 +33,10 @@
 
 bin/*
 !bin/
+c_libraries/*/bin/*
+!c_libraries/*/bin
+
+
 
 .vscode/*
 !.vscode/settings.json

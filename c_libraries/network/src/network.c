@@ -103,7 +103,7 @@ int RecieveMessage(int socket_descripter, void * buffer, unsigned int bufferSize
   return bytesRecived; 
 }
 
-int Client_Connect(int * server_socket_discripter, const char * ipaddress, int server_port_number )
+int Client_Connect(int * server_socket_discripter,  char * ipaddress, int server_port_number )
 {
 
   int status = -1; 

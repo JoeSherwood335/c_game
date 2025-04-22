@@ -7,23 +7,23 @@ SRC     := src
 INCLUDE := include
 
 LIBRARIES   := lib/*.a
-EXECUTABLE  := gameServer
+EXECUTABLE_SERVER  := gameServer
+EXECUTABLE_CLIENT  := gameClient
 
-all: $(BIN)/$(EXECUTABLE)
+all: $(BIN)/$(EXECUTABLE_CLIENT) $(BIN)/$(EXECUTABLE_SERVER)
+	@echo "Compiling $(EXECUTABLE_SERVER) and $(EXECUTABLE_CLIENT) in $(BIN) directory"
 
 run: clean all
 	clear
-	./$(BIN)/$(EXECUTABLE)
+	./$(BIN)/$(EXECUTABLE_SERVER) &
+	./$(BIN)/$(EXECUTABLE_CLIENT) 
 
-$(BIN)/$(EXECUTABLE): $(SRC)/*.c
+$(BIN)/$(EXECUTABLE_SERVER): $(SRC)/g_server.c
 	$(CXX) $(CXX_FLAGS) -I $(INCLUDE) $^ -o $@ $(LIBRARIES)
 
-p_$(BIN)/$(EXECUTABLE): $(SRC)/*.c
-	$(CXX) $(CXX_P_FLAGS) -I $(INCLUDE) $^ -o $@ $(LIBRARIES)
-
-
-pre: $(SRC)/*.c
-	$(CXX) $(CXX_FLAGS) -I$(INCLUDE) $^ $(LIBRARIES) -E > preprocess
+$(BIN)/$(EXECUTABLE_CLIENT): $(SRC)/g_client.c
+	$(CXX) $(CXX_FLAGS) -I $(INCLUDE) $^ -o $@ $(LIBRARIES)
+	@echo "Compiling $(EXECUTABLE_CLIENT) in $(BIN) directory"
 
 clean:
 	-rm $(BIN)/*

@@ -1,5 +1,6 @@
 #!/bin/bash
 lib_name="$1"
+lib_name_="$1_"
 
 bin_folder="./$lib_name/bin"
 
@@ -25,16 +26,16 @@ if [ ! -e "$bin_folder" ]; then
 elif [ ! -e "$src_folder" ]; then
 	echo "$src_folder not found"
     echo "exiting"	
-elif [ -f "$bin_folder/lib_$lib_name_$current_time.o" ]; then
+elif [ -f "$bin_folder/lib_$lib_name-$current_time.o" ]; then
     echo "up to date!"
 else	
     echo "Compiling..."	
-
-
-gcc -c $src_folder/$lib_name.c -o $bin_folder/lib_$lib_name_$current_time.o
-
-ar rsc $project_lib_folder/lib_$lib_name.a $bin_folder/lib_$lib_name_$current_time.o
-
+[ -f "$src_folder/$lib_name.c" ] && gcc -c $src_folder/$lib_name.c -o $bin_folder/lib_$lib_name_$current_time.o
+    echo "Archiveing Header..."	
+cp $src_folder/$lib_name.h $bin_folder/$lib_name_$current_time.h
+    echo "Compressing..."	
+[ -f "$src_folder/$lib_name.c" ] && ar rsc $project_lib_folder/lib_$lib_name.a $bin_folder/lib_$lib_name_$current_time.o
+    echo "CopyingHeader..."	
 cp $src_folder/*.h $project_include_folder
     echo "Completed"	
 fi
