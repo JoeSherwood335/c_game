@@ -50,3 +50,16 @@ static void u_write_float_str(double );
 /// @brief 
 /// @param  
 static void u_write_str(char * );
+
+typedef enum
+{
+  U_LOG_INFORMATION_E = 0,
+  U_LOG_ERROR_E,
+  U_LOG_DEBUG_E,
+  U_LOG_VERBOSE_E,
+} u_log_t;
+
+void u_enable_log(u_log_t message);
+void u_disable_log(u_log_t message);
+void u_enable_log_all(void);
+void u_disable_log_all(void);

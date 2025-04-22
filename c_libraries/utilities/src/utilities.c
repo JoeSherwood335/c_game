@@ -9,6 +9,9 @@
 #define U_MESSAGE_VERBOSE "\033[35;1;4mVerbose\033[0m\t"
 #define U_MESSAGE_ERROR "\033[31;1;4mError\033[0m \t"
 
+int u_log[4] = {1,1,1,1};
+ 
+
 int u_write_out(char message)
 {
 
@@ -80,7 +83,10 @@ int u_Log_Output(char * message, va_list args)
 
 int u_Log_Information(char * message, ...)
 {
-             
+  if(u_log[U_LOG_INFORMATION_E] == 0)
+  {
+    return 0;
+  }  
   
   va_list args, args1;
 
@@ -97,6 +103,12 @@ int u_Log_Information(char * message, ...)
 
 int u_Log_Error(char * message, ...)
 {
+
+  if(u_log[U_LOG_ERROR_E] == 0)
+  {
+    return 0;
+  }
+
   va_list args;
 
   va_start(args, message);
@@ -112,6 +124,12 @@ int u_Log_Error(char * message, ...)
 
 int u_Log_Debug(char * message, ...)
 {
+  if(u_log[U_LOG_DEBUG_E] == 0)
+  {
+    return 0;
+  }
+
+
   va_list args;
 
   va_start(args, message);
@@ -127,6 +145,11 @@ int u_Log_Debug(char * message, ...)
 
 int u_Log_Verbose(char * message, ...)
 {
+
+  if(u_log[U_LOG_VERBOSE_E] == 0)
+  {
+    return 0;
+  }
   va_list args;
 
   va_start(args, message);
@@ -182,3 +205,28 @@ void u_write_str(char * b)
   }
 }
 
+void u_enable_log(u_log_t message)
+{
+  u_log[message] = 1;
+}
+
+void u_disable_log(u_log_t message)
+{
+  u_log[message] = 0;
+}
+
+void u_disable_log_all()
+{
+  for(int i = 0; i < 4; i++)
+  {
+    u_log[i] = 0;
+  }
+}
+
+void u_enable_log_all()
+{
+  for(int i = 0; i < 4; i++)
+  {
+    u_log[i] = 1;
+  }
+}
