@@ -33,7 +33,9 @@ else
 [ -f "$src_folder/$lib_name.c" ] && gcc -c $src_folder/$lib_name.c -o $bin_folder/lib_$lib_name_$current_time.o
     echo "Archiveing Header..."	
 cp $src_folder/$lib_name.h $bin_folder/$lib_name_$current_time.h
-    echo "Compressing..."	
+
+[ -f $project_lib_folder/lib_$lib_name.a] && rm $project_lib_folder/lib_$lib_name.a
+    echo "Creating Archive..."   
 [ -f "$src_folder/$lib_name.c" ] && ar rsc $project_lib_folder/lib_$lib_name.a $bin_folder/lib_$lib_name_$current_time.o
     echo "CopyingHeader..."	
 cp $src_folder/*.h $project_include_folder
