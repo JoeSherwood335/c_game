@@ -2,6 +2,8 @@
 lib_name="$1"
 lib_name_="$1_"
 
+shared_libs="../include"
+
 bin_folder="./$lib_name/bin"
 
 src_folder="./$lib_name/src"
@@ -30,11 +32,10 @@ elif [ -f "$bin_folder/lib_$lib_name-$current_time.o" ]; then
     echo "up to date!"
 else	
     echo "Compiling..."	
-[ -f "$src_folder/$lib_name.c" ] && gcc -c $src_folder/$lib_name.c -o $bin_folder/lib_$lib_name_$current_time.o
+[ -f "$src_folder/$lib_name.c" ] && gcc -ggdb  -c $src_folder/$lib_name.c -I $shared_libs -o $bin_folder/lib_$lib_name_$current_time.o
     echo "Archiveing Header..."	
 cp $src_folder/$lib_name.h $bin_folder/$lib_name_$current_time.h
-
-[ -f $project_lib_folder/lib_$lib_name.a] && rm $project_lib_folder/lib_$lib_name.a
+[ -f $project_lib_folder/lib_$lib_name.a ] && rm $project_lib_folder/lib_$lib_name.a
     echo "Creating Archive..."   
 [ -f "$src_folder/$lib_name.c" ] && ar rsc $project_lib_folder/lib_$lib_name.a $bin_folder/lib_$lib_name_$current_time.o
     echo "CopyingHeader..."	
