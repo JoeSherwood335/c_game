@@ -68,3 +68,4 @@ debug:	$(INCLUDE)/gameVars.h $(LIB)/lib_gameCore.a	$(LIB)/lib_utilities.a	$(LIB)
 
 clean:
 	-rm $(BIN)/*
+	-rm $(LIB)/*
