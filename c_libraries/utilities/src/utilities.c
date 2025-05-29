@@ -10,7 +10,8 @@
 #define U_MESSAGE_ERROR "\033[31;1;4mError\033[0m \t"
 
 int u_log[4] = {1,1,1,1};
- 
+
+char *tag = ""; 
 
 int u_write_out(char message)
 {
@@ -48,15 +49,22 @@ int u_Log_Output(char * message, va_list args)
             u_write_int_str(i);
           continue;
           case 'f':
-            float f = va_arg(args, double); 
+            float f; 
+            f = va_arg(args, double); 
             
             u_write_float_str(f);
             continue;
           case 's':
-            //u_write_out(va_arg(args, char *));
-            u_write_str(va_arg(args, char *));
+                        
+            char * s; 
+            
+            s = va_arg(args, char *);
+                        
+            u_write_str(s);
+            
             continue;
           case 'c':
+             
             // std::cout << static_cast<char>(va_arg(args, int));
             continue;
           case '%':
@@ -83,16 +91,19 @@ int u_Log_Output(char * message, va_list args)
 
 int u_Log_Information(char * message, ...)
 {
+
   if(u_log[U_LOG_INFORMATION_E] == 0)
   {
     return 0;
   }  
   
-  va_list args, args1;
+  va_list args;
 
   va_start(args, message);
 
   u_Log_Output(U_MESSAGE_INFORMATION, NULL);
+
+  u_Log_Output(tag, NULL);  
 
   u_Log_Output(message, args);
 
@@ -129,7 +140,6 @@ int u_Log_Debug(char * message, ...)
     return 0;
   }
 
-
   va_list args;
 
   va_start(args, message);
@@ -150,11 +160,12 @@ int u_Log_Verbose(char * message, ...)
   {
     return 0;
   }
+  
+  u_Log_Output(U_MESSAGE_VERBOSE, NULL);
+
   va_list args;
 
   va_start(args, message);
-  
-  u_Log_Output(U_MESSAGE_VERBOSE, NULL);
 
   u_Log_Output(message, args);
 
@@ -166,6 +177,7 @@ int u_Log_Verbose(char * message, ...)
 void u_write_int_str(int i)
 {
   char p[20];
+
   unsigned int p_size = 0, r_size = 0; 
   
   r_size = sprintf(p,"%i", i);
@@ -195,13 +207,13 @@ void u_write_float_str(double i)
   }
 }
 
-void u_write_str(char * b)
+void u_write_str(char * c)
 {
-  
-  while(*b != '\0')
+   
+  while(*c != '\0')
   {
 
-    u_write_out(*b++);
+    u_write_out(*c++);
   }
 }
 
