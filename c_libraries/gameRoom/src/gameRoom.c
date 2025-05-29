@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "gameRoom.h"
+#include "utilities.h"
 
 #define EXITERROR -1
 #define EXITOK 0
@@ -49,7 +50,7 @@ int g_ini_room(g_room *room, char *description) {
     room->players[x] = NULL; // Initialize all player slots to NULL
   }
   lastRoomCreated = room; // Update the last created room pointer
-  printf("Room %d initialized with description: %s\n", room->id, room->description);
+  u_Log_Verbose("Game: Room %d initialized with description: %s\n", room->id, description);
   // Initialize the room ID and description
    
   return room->id; // Return the room ID
@@ -62,7 +63,7 @@ int g_can_move(g_room *room, int direction) {
   return 0; // Cannot move in the specified direction
 }
 
-int g_room_add_player(g_room *room, g_player *player) {
+int g_room_add_player(g_room *room, g_character *player) {
   for (int i = 0; i < 10; i++) {
     if (room->players[i] == NULL) {
       room->players[i] = player;
@@ -73,7 +74,7 @@ int g_room_add_player(g_room *room, g_player *player) {
   return EXITERROR; // Room is full
 }
 
-int g_room_remove_player(g_room *room, g_player *player) {
+int g_room_remove_player(g_room *room, g_character *player) {
   for (int i = 0; i < 10; i++) {
     if (room->players[i] == player) {
       room->players[i] = NULL;
@@ -84,9 +85,10 @@ int g_room_remove_player(g_room *room, g_player *player) {
 }
 
 
-int move_player(g_player *player, g_room *from, g_room *to) {
+int move_player(g_character *player, g_room *from, g_room *to) {
   
-  printf("Player %s moved", player->name);  
+  u_Log_Information("Player %s moved", player->name);  
+
   if (from != NULL) {
     g_room_remove_player(from, player);
 
@@ -100,7 +102,7 @@ int move_player(g_player *player, g_room *from, g_room *to) {
   return EXITOK;
 }
 
-int g_try_move(g_player *player,  int direction) {
+int g_try_move(g_character *player,  int direction) {
   g_room *from = player->current_room;
 
   if (g_can_move(from, direction)) {
@@ -111,6 +113,6 @@ int g_try_move(g_player *player,  int direction) {
       return EXITOK; // Move successful
   }
 
-  printf("Player %s cannot move in direction %d from room %s\n", player->name, direction, from->description);
+  u_Log_Information("Player %s cannot move in direction %d from room %s\n", player->name, direction, from->description);
   return EXITERROR; // Move failed
 }

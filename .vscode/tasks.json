@@ -8,6 +8,12 @@
             "label": "build",
             "type": "shell",
             "command": "make",
+            "args": [
+              {
+                "value": "runServer",
+                "quoting": "escape"
+              }
+            ],
             "group": {
                 "kind": "build",
                 "isDefault": true,

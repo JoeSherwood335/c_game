@@ -18,23 +18,23 @@ int g_can_move(g_room *room, int direction);
 /// @param room
 /// @param player
 /// @return 0 on success, -1 if room is full
-int g_room_add_player(g_room *room, g_player *player);
+int g_room_add_player(g_room *room, g_character *player);
 /// @brief remove a player from a room
 /// @param room
 /// @param player
 /// @return 0 on success, -1 if player not found in room
-int g_room_remove_player(g_room *room, g_player *player); 
+int g_room_remove_player(g_room *room, g_character *player); 
 /// @brief move a player from one room to another
 /// @param player
 /// @param from
 /// @param to
 /// @return 0 on success
-int move_player(g_player *player, g_room *from, g_room *to);
+int move_player(g_character *player, g_room *from, g_room *to);
 /// @brief try to move a player in a specified direction
 /// @param player 
 /// @param direction 
 /// @return 
-int g_try_move(g_player *player, int direction);
+int g_try_move(g_character *player, int direction);
 
 
 #endif // GAME_ROOM_H

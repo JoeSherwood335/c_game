@@ -1,5 +1,7 @@
-#include "gameVars.h"
+#ifndef GAMECORE_H
+#define GAMECORE_H
 
+#include "gameVars.h"
 #define MAX_PLAYERS 15
 #define MAX_ROOMS 10
 #define MAX_ITEMS 10
@@ -19,3 +21,5 @@ void remove_Item_from_context(g_char_descriper item_fd);
 g_item *get_Item_from_context(g_char_descriper item_fd);
 
 void destroy_game_contexts();
+
+#endif // GAMECORE_H

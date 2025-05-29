@@ -109,6 +109,7 @@ void add_Item_to_context(g_item *item)
         }
     }
 }
+
 void remove_Item_from_context(g_char_descriper item_fd)
 {
     if (item_fd < 0 || item_fd >= MAX_ITEMS) {
@@ -121,6 +122,7 @@ void remove_Item_from_context(g_char_descriper item_fd)
         item_count--;
     }
 }
+
 g_item *get_Item_from_context(g_char_descriper item_fd)
 {
     if (item_fd < 0 || item_fd >= MAX_ITEMS) {
@@ -129,7 +131,7 @@ g_item *get_Item_from_context(g_char_descriper item_fd)
     return g_item_context[item_fd];
 }
 
-destroy_game_contexts()
+void destroy_game_contexts()
 {
     for (int i = 0; i < MAX_PLAYERS; i++) {
         if (g_player_context[i] != NULL) {
