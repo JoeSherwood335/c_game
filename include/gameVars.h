@@ -1,6 +1,14 @@
 #ifndef GAMEVARS_H
 #define GAMEVARS_H
 
+#define ERROR_MAX_PLAYERS_REACHED -1
+#define ERROR_MAX_ROOMS_REACHED -2
+#define ERROR_MAX_ITEMS_REACHED -3
+#define ERROR_INVALID_PLAYER_INDEX -4
+#define ERROR_INVALID_ROOM_INDEX -5
+#define ERROR_INVALID_ITEM_INDEX -6
+
+
 extern const int NORTH;
 extern const int SOUTH;
 extern const int EAST;
@@ -34,7 +42,6 @@ typedef struct {
     void *next_room; // Pointer to the next room
 } g_room;
 
-
 typedef struct {
     int id;
     char name[50];
@@ -44,6 +51,8 @@ typedef struct {
 typedef int g_room_descriper;
 typedef int g_char_descriper;
 typedef int g_item_descriper;
+
+
 
 
 #endif // GAMEVARS_H

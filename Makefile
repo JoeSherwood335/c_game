@@ -15,8 +15,11 @@ EXECUTABLE_SERVER  := gameServer
 EXECUTABLE_CLIENT  := gameClient
 LIBRARY_GAMEROOM   := gameRoom
 
-all: $(LIB)/lib_gameCore.a	$(LIB)/lib_utilities.a	$(LIB)/lib_gameRoom.a $(LIB)/lib_gamePlayer.a	$(BIN)/$(EXECUTABLE_SERVER)
-	@echo "Compiling $(EXECUTABLE_SERVER) and $(EXECUTABLE_CLIENT) in $(BIN) directory"
+all: $(INCLUDE)/gameVars.h	$(LIB)/lib_gameCore.a $(LIB)/lib_utilities.a $(LIB)/lib_gameRoom.a $(LIB)/lib_gamePlayer.a $(BIN)/$(EXECUTABLE_SERVER) $(BIN)/$(EXECUTABLE_CLIENT)
+	@echo "All Completed"
+
+rebuild: clean all
+	@echo "Rebuilding all components"
 
 run: clean all
 	clear
@@ -58,11 +61,11 @@ $(INCLUDE)/gameVars.h: c_libraries/gameVars/src/gameVars.h
 	@echo "Library gameVars"
 	cp c_libraries/gameVars/src/gameVars.h $(INCLUDE)/gameVars.h
 
-runServer:	$(INCLUDE)/gameVars.h $(LIB)/lib_gameCore.a	$(LIB)/lib_utilities.a	$(LIB)/lib_gameRoom.a $(LIB)/lib_gamePlayer.a	$(BIN)/$(EXECUTABLE_SERVER)
+runServer:	all
 	@echo "Compiling Libraries and running Server"
 	./$(BIN)/$(EXECUTABLE_SERVER)
 
-debug:	$(INCLUDE)/gameVars.h $(LIB)/lib_gameCore.a	$(LIB)/lib_utilities.a	$(LIB)/lib_gameRoom.a $(LIB)/lib_gamePlayer.a	$(BIN)/$(EXECUTABLE_SERVER)
+debugServer:	all
 	@echo "Compiling Libraries and running Server in debug mode"
 	gdb ./$(BIN)/$(EXECUTABLE_SERVER)
 

@@ -25,7 +25,7 @@ void * get_next_room(g_room *room, int direction) {
   return room->directions[direction];
 }
 
-int g_ini_room(g_room *room, char *description) {
+int gr_ini_room(g_room *room, char *description) {
   
   if (room == NULL || description == NULL) {
     return EXITERROR; // Error: Invalid parameters
@@ -56,14 +56,14 @@ int g_ini_room(g_room *room, char *description) {
   return room->id; // Return the room ID
 }
 
-int g_can_move(g_room *room, int direction) {
+int gr_can_move(g_room *room, int direction) {
   if (room->directions[direction] != NULL) {
     return -1; // Can move in the specified direction
   }
   return 0; // Cannot move in the specified direction
 }
 
-int g_room_add_player(g_room *room, g_character *player) {
+int gr_room_add_player(g_room *room, g_character *player) {
   for (int i = 0; i < 10; i++) {
     if (room->players[i] == NULL) {
       room->players[i] = player;
@@ -74,7 +74,7 @@ int g_room_add_player(g_room *room, g_character *player) {
   return EXITERROR; // Room is full
 }
 
-int g_room_remove_player(g_room *room, g_character *player) {
+int gr_room_remove_player(g_room *room, g_character *player) {
   for (int i = 0; i < 10; i++) {
     if (room->players[i] == player) {
       room->players[i] = NULL;
@@ -85,7 +85,7 @@ int g_room_remove_player(g_room *room, g_character *player) {
 }
 
 
-int move_player(g_character *player, g_room *from, g_room *to) {
+int gr_move_player(g_character *player, g_room *from, g_room *to) {
   
   u_Log_Information("Player %s moved", player->name);  
 
@@ -102,7 +102,7 @@ int move_player(g_character *player, g_room *from, g_room *to) {
   return EXITOK;
 }
 
-int g_try_move(g_character *player,  int direction) {
+int gr_try_move(g_character *player,  int direction) {
   g_room *from = player->current_room;
 
   if (g_can_move(from, direction)) {
