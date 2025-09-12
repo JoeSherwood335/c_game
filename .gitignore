@@ -43,6 +43,14 @@ c_libraries/*/bin/*
 !.vscode/extensions.json
 !.vscode/*.code-snippets
 
+# Exclude header files that are from shared utilities and game objects
+include/gameCore.h
+include/gamePlayer.h
+include/gameRoom.h
+include/gameVars.h
+include/network.h
+include/utilities.h
+
 # Local History for Visual Studio Code
 .history/
 
