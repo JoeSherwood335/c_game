@@ -8,8 +8,6 @@
 #define MAX_ITEMS 200
 
 
-
-
 extern int gc_error_code;
 
 /// @brief Initializes the game contexts for players, rooms, and items.

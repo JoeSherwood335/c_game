@@ -9,7 +9,7 @@
 #include "gamePlayer.h"
 #include <stdarg.h>
 
-void build_char();
+
 void build_map();
 
 g_char_descriper player_fds[5] = {0, 0, 0, 0, 0};
@@ -32,46 +32,19 @@ int main() {
   
   gc_init_game_contexts();
 
-  gp_create_character_object(&player_fds[0], 1, "Hero");
+  g_character *hero_character = gp_create_character_object(1, "Hero");
+
+  player_fds[0] = gc_add_Character_to_context(hero_character);
 
   build_map();
 
   g_character *player = gc_get_Character_from_context(player_fds[0]);
+ 
+  u_Log_Information(player->name);
 
   gc_destroy_game_contexts();
    
   return 0;
-}
-
-
-void build_char()
-{
-  g_char_descriper player_fd = 0;
-
-  int status = gp_create_character_object(&player_fd, 1, "Hero");
-
-  if (status < 0) {
-    u_Log_Error("Game: Failed to create character object.\n");
-    return;
-  }
-
-  g_character *player = gc_get_Character_from_context(player_fd);
-
-  if (player_fd < 0) {
-    u_Log_Error("Game: Failed to retrieve character descriptor.\n");
-    return;
-  }
-
-  u_Log_Debug("Game: Character created with FD:%i \n", player_fd);
-
-  if (player == NULL) {
-    u_Log_Error("Game: Failed to retrieve character from context.\n");
-    return;
-  }
-
-  player_fds[0] = player_fd;
-
-  u_Log_Verbose("Game: Character created with ID: %d, Name: %s\n", player->id, player->name);
 }
 
 void build_map()
