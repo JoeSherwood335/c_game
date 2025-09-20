@@ -90,12 +90,12 @@ int gr_move_player(g_character *player, g_room *from, g_room *to) {
   u_Log_Information("Player %s moved", player->name);  
 
   if (from != NULL) {
-    g_room_remove_player(from, player);
+    gr_room_remove_player(from, player);
 
     printf(" from room %s",  from->description);
   }
     
-  g_room_add_player(to, player);
+  gr_room_add_player(to, player);
   
   printf(" to room %s\n", to->description);
   
@@ -105,11 +105,11 @@ int gr_move_player(g_character *player, g_room *from, g_room *to) {
 int gr_try_move(g_character *player,  int direction) {
   g_room *from = player->current_room;
 
-  if (g_can_move(from, direction)) {
+  if (gr_can_move(from, direction)) {
 
       g_room *to = get_next_room(from, direction);
 
-      move_player(player, from, to);
+      gr_move_player(player, from, to);
       return EXITOK; // Move successful
   }
 
