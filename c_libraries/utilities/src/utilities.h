@@ -2,7 +2,6 @@
 
 #include <stdarg.h>
 
-
 /// @brief  {Private} Outputs Messages to Log Output(stream, file)
 /// @param  Message of type Char* 
 /// @return Status of Function 0 = Successfull, -1 = UnSuccessfule
@@ -59,7 +58,20 @@ typedef enum
   U_LOG_VERBOSE_E,
 } u_log_t;
 
+/// @brief Enables Output 
+/// @param message 
 void u_enable_log(u_log_t message);
+
+/// @brief Disables Output 
+/// @param message
 void u_disable_log(u_log_t message);
+
+/// @brief Enables All Output 
+/// @param message
 void u_enable_log_all(void);
+
+/// @brief Disables All Output 
+/// @param message
 void u_disable_log_all(void);
+
+void setTag(char * tag);

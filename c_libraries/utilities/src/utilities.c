@@ -9,24 +9,14 @@
 #define U_MESSAGE_VERBOSE "\033[35;1;4mVerbose\033[0m\t"
 #define U_MESSAGE_ERROR "\033[31;1;4mError\033[0m \t"
 
-int u_log[4] = {1,1,1,1};
+char * u_Tag = ""; 
 
-char *tag = ""; 
+int u_log[4] = {1,1,1,1};
 
 int u_write_out(char message)
 {
-
   printf("%c", message);
-
-  //static char cbuffer[max_bufferlen];
-  //static int bufferlen;
-
-  //if (message =='\n' || bufferlen >= max_bufferlen)
-  //{
-  //  print(cbuffer);
-  //  print('\n');
-  // }
-
+   
   return 0;
 }
 
@@ -91,6 +81,11 @@ int u_Log_Output(char * message, va_list args)
 
 int u_Log_Information(char * message, ...)
 {
+  
+  char cBuffer[10]; 
+  int b_BufferSize = 0;
+
+  
 
   if(u_log[U_LOG_INFORMATION_E] == 0)
   {
@@ -102,8 +97,10 @@ int u_Log_Information(char * message, ...)
   va_start(args, message);
 
   u_Log_Output(U_MESSAGE_INFORMATION, NULL);
+  
+  b_BufferSize = sprintf(cBuffer,"%s: ", u_Tag);  
 
-  u_Log_Output(tag, NULL);  
+  u_Log_Output(cBuffer,NULL);
 
   u_Log_Output(message, args);
 
@@ -215,6 +212,11 @@ void u_write_str(char * c)
 
     u_write_out(*c++);
   }
+}
+
+void setTag(char * tag){
+
+    u_Tag = tag; 
 }
 
 void u_enable_log(u_log_t message)
