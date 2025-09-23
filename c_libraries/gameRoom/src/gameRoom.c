@@ -46,13 +46,15 @@ int gr_ini_room(g_room *room, char *description) {
   for(int x = 0; x < 6; x++) {
     room->directions[x] = NULL; // Initialize all directions to NULL
   }
+  
   for(int x = 0; x < 10; x++) {
     room->players[x] = NULL; // Initialize all player slots to NULL
   }
+  
   lastRoomCreated = room; // Update the last created room pointer
-  u_Log_Verbose("Game: Room %d initialized with description: %s\n", room->id, description);
-  // Initialize the room ID and description
-   
+
+  u_Log_Verbose("Game: Room %i initialized with description: %s\n", room->id, description);
+    
   return room->id; // Return the room ID
 }
 

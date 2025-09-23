@@ -63,7 +63,7 @@ g_room_descriper gc_add_Room_to_context(g_room *room)
         if (g_room_context[i] == NULL) {
             g_room_context[i] = room;
             room_count++;
-            u_Log_Debug("GameCore: Room added to context at index %d.\n", i);
+            u_Log_Debug("GameCore: Room added to context at index %i.\n", i);
             return i; // Room added successfully
         }
     }
@@ -81,7 +81,7 @@ g_character *gc_get_Character_from_context(g_char_descriper char_fd)
     }
 
     if (g_player_context[char_fd] == NULL) {
-        u_Log_Error("GameCore: No player found at index %d.\n", char_fd);
+        u_Log_Error("GameCore: No player found at index %i.\n", char_fd);
         return NULL; // No player found at this index
     }
     return g_player_context[char_fd];
@@ -114,7 +114,7 @@ void gc_remove_Room_from_context(g_char_descriper room_fd)
     if (g_room_context[room_fd] != NULL) {
         g_room_context[room_fd] = NULL;
         free(g_room_context[room_fd]);
-        u_Log_Debug("GameCore: Room removed from context at index %d.\n", room_fd);
+        u_Log_Debug("GameCore: Room removed from context at index %i.\n", room_fd);
         room_count--;
     }
 }
@@ -137,7 +137,7 @@ void gc_remove_Character_from_context(g_char_descriper char_fd)
         player_count--;
     }
 
-    u_Log_Debug("GameCore: Player removed from context at index %d.\n", char_fd);
+    u_Log_Debug("GameCore: Player removed from context at index %i.\n", char_fd);
 }
 
 void gc_remove_Item_from_context(g_char_descriper item_fd)
