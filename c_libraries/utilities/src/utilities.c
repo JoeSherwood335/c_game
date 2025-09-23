@@ -79,14 +79,20 @@ int u_Log_Output(char * message, va_list args)
   return 0;
 }
 
-int u_Log_Information(char * message, ...)
-{
-  
+void _u_Log_Output(char * type, char * tag, char * formatMessage, va_list args) {
+
   char cBuffer[10]; 
   int b_BufferSize = 0;
 
-  
+  b_BufferSize = sprintf(cBuffer,"%s: ", u_Tag);  
 
+  u_Log_Output(type, NULL);
+  u_Log_Output(cBuffer, NULL);
+  u_Log_Output(formatMessage, args);
+}
+
+int u_Log_Information(char * message, ...)
+{
   if(u_log[U_LOG_INFORMATION_E] == 0)
   {
     return 0;
@@ -96,13 +102,7 @@ int u_Log_Information(char * message, ...)
 
   va_start(args, message);
 
-  u_Log_Output(U_MESSAGE_INFORMATION, NULL);
-  
-  b_BufferSize = sprintf(cBuffer,"%s: ", u_Tag);  
-
-  u_Log_Output(cBuffer,NULL);
-
-  u_Log_Output(message, args);
+  _u_Log_Output(U_MESSAGE_INFORMATION, "", message, args);
 
   va_end(args);
 
@@ -121,9 +121,7 @@ int u_Log_Error(char * message, ...)
 
   va_start(args, message);
 
-  u_Log_Output(U_MESSAGE_ERROR, NULL);
-
-  u_Log_Output(message, args);
+  _u_Log_Output(U_MESSAGE_ERROR, "", message, args);
 
   va_end(args);
 
@@ -141,9 +139,7 @@ int u_Log_Debug(char * message, ...)
 
   va_start(args, message);
 
-  u_Log_Output(U_MESSAGE_DEBUG, NULL);
-
-  u_Log_Output(message, args);
+  _u_Log_Output(U_MESSAGE_DEBUG, "", message, args);
 
   va_end(args);
 
@@ -158,14 +154,12 @@ int u_Log_Verbose(char * message, ...)
     return 0;
   }
   
-  u_Log_Output(U_MESSAGE_VERBOSE, NULL);
-
   va_list args;
 
   va_start(args, message);
-
-  u_Log_Output(message, args);
-
+  
+  _u_Log_Output(U_MESSAGE_VERBOSE, "", message, args);
+  
   va_end(args);
 
   return 0;

@@ -13,6 +13,13 @@ static int u_write_out(char);
 /// @return Status of Function 0 = Successfull, -1 = UnSuccessfull
 static int u_Log_Output(char *, va_list);
 
+/// @brief {Private} Passthrough output message to console screen
+/// @param type Information, Debug, Verbos, Error
+/// @param tag Optional Tag
+/// @param formatMessage format message 
+/// @param args 
+static void _u_Log_Output(char * type, char * tag, char * formatMessage, va_list args);
+
 /// @brief Info Outputs Messages to Log Output(stream, file)
 /// @param  Message of type Char* Formated.
 /// @param  Collection of Varables for Message %i, %s
