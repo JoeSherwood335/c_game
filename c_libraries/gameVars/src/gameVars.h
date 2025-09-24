@@ -52,8 +52,8 @@ typedef struct {
     void *source;
     int roundTime; 
     int type; // convert to enum Move, Task, Emote\Talk, Attack
-    void *actionType 
-    void *next_action
+    void *actionType;
+    void *next_action;
 } g_action;
 
 typedef struct {
