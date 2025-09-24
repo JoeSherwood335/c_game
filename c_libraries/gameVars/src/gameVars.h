@@ -48,6 +48,20 @@ typedef struct {
     char description[100];
 } g_item;
 
+typedef struct {
+    void *source;
+    int roundTime; 
+    int type; // convert to enum Move, Task, Emote\Talk, Attack
+    void *actionType 
+    void *next_action
+} g_action;
+
+typedef struct {
+    g_character *character; 
+    g_room *current_room;
+    g_room *next_room;
+} g_action_type_move;
+
 typedef int g_room_descriper;
 typedef int g_char_descriper;
 typedef int g_item_descriper;
