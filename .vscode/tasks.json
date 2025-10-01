@@ -10,7 +10,7 @@
             "command": "make",
             "args": [
               {
-                "value": "runServer",
+                "value": "all",
                 "quoting": "escape"
               }
             ],

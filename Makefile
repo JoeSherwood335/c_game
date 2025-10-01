@@ -15,7 +15,7 @@ EXECUTABLE_SERVER  := gameServer
 EXECUTABLE_CLIENT  := gameClient
 LIBRARY_GAMEROOM   := gameRoom
 
-all: $(INCLUDE)/gameVars.h	$(LIB)/lib_gameCore.a $(LIB)/lib_utilities.a $(LIB)/lib_gameRoom.a $(LIB)/lib_gamePlayer.a $(BIN)/$(EXECUTABLE_SERVER)
+all: $(INCLUDE)/gameVars.h	$(LIB)/lib_gameAction.a	$(LIB)/lib_gameCore.a $(LIB)/lib_utilities.a $(LIB)/lib_gameRoom.a $(LIB)/lib_gamePlayer.a $(BIN)/$(EXECUTABLE_SERVER)
 	@echo "All Completed"
 
 rebuild: clean all
@@ -28,7 +28,7 @@ run: clean all
 
 $(BIN)/$(EXECUTABLE_SERVER): $(SRC)/g_server.c
 	@echo "Compiling $(EXECUTABLE_SERVER)"
-	$(CXX) $(CXX_FLAGS) -I $(INCLUDE) $^ -o $@ $(LIBRARIES)
+	@$(CXX) $(CXX_FLAGS) -I $(INCLUDE) $^ -o $@ $(LIBRARIES)
 
 $(BIN)/$(EXECUTABLE_CLIENT): $(SRC)/g_client.c
 	@echo "Compiling $(EXECUTABLE_CLIENT)"
@@ -58,6 +58,12 @@ $(LIB)/lib_gamePlayer.a: c_libraries/gamePlayer/src/gamePlayer.c
 	@$(CXX) $(CXX_L_FLAGS) -I $(INCLUDE) $^ -o c_libraries/gamePlayer/bin/lib_gamePlayer.o 
 	@ar rsc $@ c_libraries/gamePlayer/bin/lib_gamePlayer.o
 	@cp c_libraries/gamePlayer/src/gamePlayer.h $(INCLUDE)/gamePlayer.h
+
+$(LIB)/lib_gameAction.a: c_libraries/gameAction/src/gameAction.c
+	@echo "Building Library gameAction"
+	@$(CXX) $(CXX_L_FLAGS) -I $(INCLUDE) $^ -o c_libraries/gameAction/bin/lib_gameAction.o 
+	@ar rsc $@ c_libraries/gameAction/bin/lib_gameAction.o
+	@cp c_libraries/gameAction/src/gameAction.h $(INCLUDE)/gameAction.h
 
 $(INCLUDE)/gameVars.h: c_libraries/gameVars/src/gameVars.h
 	@echo "Building Library gameVars"

@@ -50,6 +50,7 @@ include/gameRoom.h
 include/gameVars.h
 include/network.h
 include/utilities.h
+include/gameAction.h
 
 # Local History for Visual Studio Code
 .history/

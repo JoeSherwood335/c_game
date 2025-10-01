@@ -9,5 +9,6 @@
   "C_Cpp.default.includePath": [
     "include",
     "${workspaceFolder}/include"
-  ]
+  ],
+  "C_Cpp.default.compilerPath": "/usr/bin/gcc"
 }
