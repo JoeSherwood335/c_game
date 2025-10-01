@@ -100,6 +100,8 @@ int gr_move_player(g_character *player, g_room *from, g_room *to) {
   gr_room_add_player(to, player);
   
   printf(" to room %s\n", to->description);
+
+  player->current_room = to; 
   
   return EXITOK;
 }
@@ -115,6 +117,6 @@ int gr_try_move(g_character *player,  int direction) {
       return EXITOK; // Move successful
   }
 
-  u_Log_Information("Player %s cannot move in direction %d from room %s\n", player->name, direction, from->description);
+  u_Log_Information("Player %s cannot move in direction %i from room %s \n", player->name, direction, from->description);
   return EXITERROR; // Move failed
 }

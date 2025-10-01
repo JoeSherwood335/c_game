@@ -65,6 +65,7 @@ typedef struct {
 typedef int g_room_descriper;
 typedef int g_char_descriper;
 typedef int g_item_descriper;
+typedef int g_action_descripter; 
 
 
 
