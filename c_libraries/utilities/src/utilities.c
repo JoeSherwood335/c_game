@@ -37,7 +37,7 @@ int u_Log_Output(char * message, va_list args)
             i = va_arg(args, int); 
             
             u_write_int_str(i);
-          continue;
+            continue;
           case 'f':
             float f; 
             f = va_arg(args, double); 
