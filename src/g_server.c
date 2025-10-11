@@ -16,24 +16,34 @@
 #define MAX_ROOM_FDS 6
 #define SEARCH_MAX_DIRECTION 4
 
+#define HEART_BEAT_S_DELAY 0
+#define HEART_BEAT_MM_DELAY 500000000
 
 void ini_text_gamesAssets();
 void moveCharacter(g_character *s_char, g_room *f_room, g_room *t_room);
 void npc_client_Poll_Choices();
 int roll(int dice);
 void pollAction();
+void *Heart_Beat(void *);
+
+unsigned int game_is_Running; 
 
 g_char_descriper player_fds[MAX_PLAYER_FDS] = {0, 0, 0, 0, 0};
 g_room_descriper room_fds[MAX_ROOM_FDS] = {0, 0, 0, 0, 0, 0};
 
 
+typedef enum {
+  MAIN = 1,
+  CHARACTER = 2,
+  ROOM = 3
+} menu; 
+
+
 int main() {
   
-  struct timespec request, remaining;
-  int counter = 0; 
+  memset(&game_is_Running, 0, sizeof(unsigned int));
   
-  // request.tv_sec = 2; // 2 seconds
-  request.tv_nsec = 500000000; // 500,000,000 nanoseconds (0.5 seconds)
+  game_is_Running = 1; 
 
   u_disable_log_all();
   u_enable_log(U_LOG_INFORMATION_E);
@@ -52,24 +62,136 @@ int main() {
 
   ini_text_gamesAssets();
 
-  setTag("Server");
+  int c_response = 0; 
+  menu c = MAIN; 
+  int l = 0, x_id = 0;
 
-  u_Log_Information("Start HeartBeat \n");
+  while(game_is_Running == 1){
+    
+    print_menu(c, l, x_id);
+    
+    printf("Choose: ");
+
+    scanf("%i", &c_response);
+    
+    char ch; 
+    while ((ch = getchar()) != '\n' && ch != EOF);
+
+    if(c != MAIN && c_response == -1 ){
+      c = MAIN;
+      continue;
+    }
+
+    switch(c){
+      case(MAIN):
+        switch (c_response)
+        {
+          case(3):
+            game_is_Running = 0;
+          break;
+          case(1):
+            c = CHARACTER;
+            l = 1;
+          break;
+          case(2):
+            c = ROOM; 
+            l = 1;
+          default:
+
+          
+          break;
+        }
+      break;
+      case(CHARACTER):
+        switch (l)
+        {
+        case 1:
+          l=2;  
+        break;
+        case 2:
+          l=1;  
+        break;
+        default:
+          c = MAIN; 
+        break;
+        }
+      break;
+      default:
+
+      break;
+    }
+  }
+
+  gc_destroy_game_contexts();
+  return 0;
+}
+
+void print_menu(menu current_menu, int current_level, int x_id){
+    printf("Game Server \n");
+    switch (current_menu) {
+      case(MAIN):
+        printf("1. \t Character \n");
+        printf("2. \t Room \n");
+        printf("3. \t exit \n");
+      break; 
+      case(CHARACTER):
+        switch(current_level) {
+          case(1):
+            for(int x = 0; x<MAX_PLAYER_FDS; x++){
+              g_character *c = gc_get_Character_from_context(player_fds[x]);
+              printf("%i\t%s\n", x, c->name);
+            }
+            printf("%i\tBack\n", -1);
+          break; 
+          case(2):
+            print_character(x_id);
+            printf("Any Number to go back.\n", -1);
+          break;
+        }
+    }
+}
+
+void print_character(g_char_descriper chr){
+  g_character *c = gc_get_Character_from_context(chr);
+  g_room *r = (g_room *)c->current_room;
+  printf("Game Server Character Info \n");
+  printf("%i.\t%s  \n", c->id, c->name);
+  printf("Current Room %s \n\n", r->description);
+}
+
+void print_room(g_room_descriper chr){
+  g_room *c = gc_get_Room_from_context(chr);
+  printf("Game Server Room Info \n");
+  printf("%i./t%s  \n", c->id, c->description);
+  printf("\nCharacters \n");
+  for(int x = 0; x < 10; x++){
+    if(c->players[x] != NULL){
+      g_character *p = c->players[x];
+      printf("\t%s \n", p->name);
+    }
+  }
+  printf("\n");
+}
+
+void *Heart_Beat(void * isRunning)
+{
+  unsigned int counter = 0; 
+
+  struct timespec request, remaining;
+
+  request.tv_sec = HEART_BEAT_S_DELAY;
+  request.tv_nsec = HEART_BEAT_MM_DELAY;
+
   while(counter++ < 100){
-    setTag("Server");
- 
+     
     int result = nanosleep(&request, &remaining); 
     u_Log_Information("Beat \n");
     npc_client_Poll_Choices();
     pollAction();
     ga_reset_ActionList();
   }
- 
-  u_Log_Information("End HeartBeat \n");
-
-  gc_destroy_game_contexts();
-  return 0;
 }
+
 
 void moveCharacter(g_character *s_char, g_room *f_room, g_room *t_room) {
   u_Log_Verbose("moveCharacter Started \n");
@@ -136,6 +258,8 @@ void pollAction() {
  
   setTag("");
 }
+
+
 
 void ini_text_gamesAssets()
 {
