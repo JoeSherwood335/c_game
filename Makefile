@@ -69,6 +69,13 @@ $(INCLUDE)/gameVars.h: c_libraries/gameVars/src/gameVars.h
 	@echo "Building Library gameVars"
 	@cp c_libraries/gameVars/src/gameVars.h $(INCLUDE)/gameVars.h
 
+$(LIB)/lib_gameConsoleUI.a:	c_libraries/gameConsoleUI/src/gameConsoleUI.c
+	@echo "Building Library gameConsoleUI"
+	@$(CXX) $(CXX_L_FLAGS) -I $(INCLUDE) $^ -o c_libraries/gameConsoleUI/bin/lib_gameConsoleUI.o
+	@ar rsc gameConsoleUI c_libraries/gameConsoleUI/bin/lib_gameConsoleUI.o
+	@cp c_libraries/gameConsoleUI/src/gameConsoleUI.h $(INCLUDE)/gameConsoleUI.h
+
+
 runServer:	all
 	@echo "Compiling Libraries and running Server"
 	./$(BIN)/$(EXECUTABLE_SERVER)

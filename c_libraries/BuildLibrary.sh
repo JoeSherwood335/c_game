@@ -1,4 +1,5 @@
 #!/bin/bash
+
 lib_name="$1"
 lib_name_="$1_"
 
@@ -6,39 +7,49 @@ shared_libs="../include"
 
 bin_folder="./$lib_name/bin"
 
+lib_folder="./$lib_name"
+
 src_folder="./$lib_name/src"
-
-project_lib_folder="../lib"
-
-project_include_folder="../include"
-
-current_time="$(date +"%F_%H:%M")"
 
 echo "lib_name=$lib_name"
 echo "src_folder=$src_folder"
-echo "project_lib_folder=$project_lib_folder"
-echo "project_include_folder=$project_include_folder"
-echo "current_time=$current_time"
+echo "shared_libs=$shared_libs"
 
 set -e
 
-if [ ! -e "$bin_folder" ]; then
-	echo "$bin_folder not found"
-    echo "exiting"	
-elif [ ! -e "$src_folder" ]; then
-	echo "$src_folder not found"
-    echo "exiting"	
-elif [ -f "$bin_folder/lib_$lib_name-$current_time.o" ]; then
-    echo "up to date!"
-else	
-    echo "Compiling..."	
-[ -f "$src_folder/$lib_name.c" ] && gcc -ggdb  -c $src_folder/$lib_name.c -I $shared_libs -o $bin_folder/lib_$lib_name_$current_time.o
-    echo "Archiveing Header..."	
-cp $src_folder/$lib_name.h $bin_folder/$lib_name_$current_time.h
-[ -f $project_lib_folder/lib_$lib_name.a ] && rm $project_lib_folder/lib_$lib_name.a
-    echo "Creating Archive..."   
-[ -f "$src_folder/$lib_name.c" ] && ar rsc $project_lib_folder/lib_$lib_name.a $bin_folder/lib_$lib_name_$current_time.o
-    echo "CopyingHeader..."	
-cp $src_folder/*.h $project_include_folder
-    echo "Completed"	
+if [ ! -e "$lib_folder" ]; then
+  echo "Making $lib_folder..." 
+  mkdir $lib_folder 
 fi
+
+if [ ! -e "$bin_folder" ]; then
+  echo "Making $bin_folder..." 
+  mkdir $bin_folder 
+fi
+
+if [ ! -e "$src_folder" ]; then
+  echo "Making $src_folder..." 
+  mkdir $src_folder 
+fi
+
+h_file="$src_folder/$lib_name.h"
+c_file="$src_folder/$lib_name.c"
+
+touch $c_file
+touch $h_file
+
+cp "$h_file" $shared_libs 
+
+echo ""
+echo "***** copy in include *****"
+echo "#include \"$lib_name.h\""
+echo "***** end include *****"
+echo ""
+echo "***** copy in makeFile *****"
+echo ""
+echo "\$(LIB)/lib_$lib_name.a: c_libraries/$lib_name/src/$lib_name.c"
+echo " @echo \"Building Library $lib_name\""
+echo " @\$(CXX) \$(CXX_L_FLAGS) -I \$(INCLUDE) $^ -o c_libraries/$lib_name/bin/lib_$lib_name.o"
+echo " @ar rsc $@ c_libraries/$lib_name/bin/lib_$lib_name.o"
+echo " @cp c_libraries/$lib_name/src/$lib_name.h \$(INCLUDE)/$lib_name.h"
+echo "***** end makeFile *****"
