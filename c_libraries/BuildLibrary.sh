@@ -45,6 +45,12 @@ echo "***** copy in include *****"
 echo "#include \"$lib_name.h\""
 echo "***** end include *****"
 echo ""
+echo "****** .gitignore *******"
+echo ""
+echo "include/$lib_name.h"
+echo ""
+echo "****** end ignore *******"
+echo ""
 echo "***** copy in makeFile *****"
 echo ""
 echo "\$(LIB)/lib_$lib_name.a: c_libraries/$lib_name/src/$lib_name.c"
@@ -53,3 +59,5 @@ echo " @\$(CXX) \$(CXX_L_FLAGS) -I \$(INCLUDE) $^ -o c_libraries/$lib_name/bin/l
 echo " @ar rsc $@ c_libraries/$lib_name/bin/lib_$lib_name.o"
 echo " @cp c_libraries/$lib_name/src/$lib_name.h \$(INCLUDE)/$lib_name.h"
 echo "***** end makeFile *****"
+
+
