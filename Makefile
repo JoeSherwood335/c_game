@@ -15,7 +15,7 @@ EXECUTABLE_SERVER  := gameServer
 EXECUTABLE_CLIENT  := gameClient
 LIBRARY_GAMEROOM   := gameRoom
 
-all: $(INCLUDE)/gameVars.h	$(LIB)/lib_gameAction.a	$(LIB)/lib_gameCore.a $(LIB)/lib_utilities.a $(LIB)/lib_gameRoom.a $(LIB)/lib_gamePlayer.a $(BIN)/$(EXECUTABLE_SERVER)
+all: $(INCLUDE)/gameVars.h	$(LIB)/lib_gameConsoleUI.a	$(LIB)/lib_gameAction.a	$(LIB)/lib_gameCore.a $(LIB)/lib_utilities.a $(LIB)/lib_gameRoom.a $(LIB)/lib_gamePlayer.a $(BIN)/$(EXECUTABLE_SERVER)
 	@echo "All Completed"
 
 rebuild: clean all
@@ -72,7 +72,7 @@ $(INCLUDE)/gameVars.h: c_libraries/gameVars/src/gameVars.h
 $(LIB)/lib_gameConsoleUI.a:	c_libraries/gameConsoleUI/src/gameConsoleUI.c
 	@echo "Building Library gameConsoleUI"
 	@$(CXX) $(CXX_L_FLAGS) -I $(INCLUDE) $^ -o c_libraries/gameConsoleUI/bin/lib_gameConsoleUI.o
-	@ar rsc gameConsoleUI c_libraries/gameConsoleUI/bin/lib_gameConsoleUI.o
+	@ar rsc $@ c_libraries/gameConsoleUI/bin/lib_gameConsoleUI.o
 	@cp c_libraries/gameConsoleUI/src/gameConsoleUI.h $(INCLUDE)/gameConsoleUI.h
 
 
