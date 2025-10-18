@@ -8,6 +8,7 @@
 #include "gameRoom.h"
 #include "gamePlayer.h"
 #include "gameAction.h"
+#include "gameConsoleUI.h"
 #include <stdarg.h>
 #include <unistd.h>
 #include <time.h> 
@@ -31,16 +32,8 @@ unsigned int game_is_Running;
 g_char_descriper player_fds[MAX_PLAYER_FDS] = {0, 0, 0, 0, 0};
 g_room_descriper room_fds[MAX_ROOM_FDS] = {0, 0, 0, 0, 0, 0};
 
-
-typedef enum {
-  MAIN = 1,
-  CHARACTER = 2,
-  ROOM = 3
-} menu; 
-
-
 int main() {
-  
+   
   memset(&game_is_Running, 0, sizeof(unsigned int));
   
   game_is_Running = 1; 
@@ -62,116 +55,74 @@ int main() {
 
   ini_text_gamesAssets();
 
-  int c_response = 0; 
-  menu c = MAIN; 
-  int l = 0, x_id = 0;
+  gcui_response response;
 
-  while(game_is_Running == 1){
-    
-    print_menu(c, l, x_id);
-    
-    printf("Choose: ");
+  response.c_menu = MAIN;
+  response.c_response = 0;
 
-    scanf("%i", &c_response);
-    
-    char ch; 
-    while ((ch = getchar()) != '\n' && ch != EOF);
+  while (game_is_Running == 1)
+  {
+    if (response.c_menu == MAIN)
+    {
+      print_root_menu();
+  
+      printf("Enter your choice: ");
+      scanf("%d", &response.c_response);
 
-    if(c != MAIN && c_response == -1 ){
-      c = MAIN;
-      continue;
-    }
-
-    switch(c){
-      case(MAIN):
-        switch (c_response)
-        {
-          case(3):
-            game_is_Running = 0;
-          break;
-          case(1):
-            c = CHARACTER;
-            l = 1;
-          break;
-          case(2):
-            c = ROOM; 
-            l = 1;
-          default:
-
-          
-          break;
-        }
-      break;
-      case(CHARACTER):
-        switch (l)
-        {
-        case 1:
-          l=2;  
+      switch (response.c_response)
+      {
+      case 1:
+        response.c_menu = CHARACTER;
         break;
-        case 2:
-          l=1;  
+      case 2:
+        response.c_menu = ROOM;
         break;
-        default:
-          c = MAIN; 
+      case 3:
+        game_is_Running = 0;
         break;
-        }
-      break;
       default:
-
-      break;
+        printf("Invalid choice. Please try again.\n");
+        break;
+      }
     }
-  }
+    else if (response.c_menu == CHARACTER)
+    {
+      print_character_all_list(player_fds, MAX_PLAYER_FDS);
+      printf("Chose a character by number: ");
+      scanf("%d", &response.c_response);
+      print_character_details(gc_get_Character_from_context(player_fds[response.c_response]));
+    }
+    else if (response.c_menu == ROOM)
+    {
+      print_room_all_list(room_fds, MAX_ROOM_FDS);
+      printf("Chose a room by number: ");
+      scanf("%d", &response.c_response);
+      print_room_details(gc_get_Room_from_context(room_fds[response.c_response]));
+      print_room_list_characters(gc_get_Room_from_context(room_fds[response.c_response]));
+    }
 
+    if(response.c_response == -1)
+    {
+      response.c_menu = MAIN;
+    }
+
+  }
+  
+  print_root_menu();
+
+  print_character_details(gc_get_Character_from_context(player_fds[0]));
+
+  print_character_all_list(player_fds, MAX_PLAYER_FDS);
+
+  print_room_all_list(room_fds, MAX_ROOM_FDS);
+
+  print_room_list_characters(gc_get_Room_from_context(room_fds[0]));
+ 
   gc_destroy_game_contexts();
+
   return 0;
 }
 
-void print_menu(menu current_menu, int current_level, int x_id){
-    printf("Game Server \n");
-    switch (current_menu) {
-      case(MAIN):
-        printf("1. \t Character \n");
-        printf("2. \t Room \n");
-        printf("3. \t exit \n");
-      break; 
-      case(CHARACTER):
-        switch(current_level) {
-          case(1):
-            for(int x = 0; x<MAX_PLAYER_FDS; x++){
-              g_character *c = gc_get_Character_from_context(player_fds[x]);
-              printf("%i\t%s\n", x, c->name);
-            }
-            printf("%i\tBack\n", -1);
-          break; 
-          case(2):
-            print_character(x_id);
-            printf("Any Number to go back.\n", -1);
-          break;
-        }
-    }
-}
-
-void print_character(g_char_descriper chr){
-  g_character *c = gc_get_Character_from_context(chr);
-  g_room *r = (g_room *)c->current_room;
-  printf("Game Server Character Info \n");
-  printf("%i.\t%s  \n", c->id, c->name);
-  printf("Current Room %s \n\n", r->description);
-}
-
-void print_room(g_room_descriper chr){
-  g_room *c = gc_get_Room_from_context(chr);
-  printf("Game Server Room Info \n");
-  printf("%i./t%s  \n", c->id, c->description);
-  printf("\nCharacters \n");
-  for(int x = 0; x < 10; x++){
-    if(c->players[x] != NULL){
-      g_character *p = c->players[x];
-      printf("\t%s \n", p->name);
-    }
-  }
-  printf("\n");
-}
 
 void *Heart_Beat(void * isRunning)
 {
