@@ -12,6 +12,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <time.h> 
+#include <pthread.h>
 
 #define MAX_PLAYER_FDS 5
 #define MAX_ROOM_FDS 6
@@ -50,12 +51,25 @@ int main() {
   u_Log_Debug("%s \n","Enabled");
   u_Log_Verbose("%s \n","Enabled");
   u_Log_Error("%s \n","Enabled");
- 
+  
+  setTag("Server");
+  
   gc_init_game_contexts();
 
   ini_text_gamesAssets();
 
+
+  void *isRunning = &game_is_Running;
+  pthread_t heart_beat_thread;
   gcui_response response;
+
+  u_Log_Information("Starting Heart Beat Thread \n");
+  pthread_create(&heart_beat_thread, NULL, Heart_Beat, isRunning);
+  
+  if(heart_beat_thread == -1){
+    u_Log_Error("Failed to create Heart Beat Thread \n");
+    game_is_Running = 0;
+  }
 
   response.c_menu = MAIN;
   response.c_response = 0;
@@ -90,7 +104,10 @@ int main() {
       print_character_all_list(player_fds, MAX_PLAYER_FDS);
       printf("Chose a character by number: ");
       scanf("%d", &response.c_response);
-      print_character_details(gc_get_Character_from_context(player_fds[response.c_response]));
+      g_character *selected_char = gc_get_Character_from_context(player_fds[response.c_response]);
+      print_character_details(selected_char);
+      printf("Current Room ");
+      print_room_details((g_room *)selected_char->current_room);
     }
     else if (response.c_menu == ROOM)
     {
@@ -106,18 +123,11 @@ int main() {
       response.c_menu = MAIN;
     }
 
-  }
+  } 
   
-  print_root_menu();
-
-  print_character_details(gc_get_Character_from_context(player_fds[0]));
-
-  print_character_all_list(player_fds, MAX_PLAYER_FDS);
-
-  print_room_all_list(room_fds, MAX_ROOM_FDS);
-
-  print_room_list_characters(gc_get_Room_from_context(room_fds[0]));
- 
+  u_Log_Information("Shutting down server... \n");
+  pthread_join(heart_beat_thread, NULL);
+  u_Log_Information("Heart Beat Thread stopped \n");
   gc_destroy_game_contexts();
 
   return 0;
@@ -126,17 +136,16 @@ int main() {
 
 void *Heart_Beat(void * isRunning)
 {
-  unsigned int counter = 0; 
+  unsigned int *game_is_Running_ptr = (unsigned int *)isRunning;
 
   struct timespec request, remaining;
 
   request.tv_sec = HEART_BEAT_S_DELAY;
   request.tv_nsec = HEART_BEAT_MM_DELAY;
 
-  while(counter++ < 100){
-     
+  while(*game_is_Running_ptr == 1){
+
     int result = nanosleep(&request, &remaining); 
-    u_Log_Information("Beat \n");
     npc_client_Poll_Choices();
     pollAction();
     ga_reset_ActionList();
@@ -146,7 +155,7 @@ void *Heart_Beat(void * isRunning)
 
 void moveCharacter(g_character *s_char, g_room *f_room, g_room *t_room) {
   u_Log_Verbose("moveCharacter Started \n");
-  // todo check if injured stealth overweighted
+  // TODO: check if injured stealth overweighted
 
   g_action_type_move *move = ga_create_actiontype_move(s_char,f_room,t_room);
 
@@ -155,7 +164,7 @@ void moveCharacter(g_character *s_char, g_room *f_room, g_room *t_room) {
 
 void npc_client_Poll_Choices()
 {
-  u_Log_Information("npc_client_Poll_Choices Started \n");
+  u_Log_Verbose("npc_client_Poll_Choices Started \n");
   for (g_char_descriper x = 0; x<MAX_PLAYER_FDS-1; x++){
 
     u_Log_Debug("for loop x = %i \n", x);
@@ -174,18 +183,18 @@ void npc_client_Poll_Choices()
 
 int roll(int dice)
 {
+  srand(time(0));
+
   unsigned int result = 0;  
 
   result = (rand() % dice) + 1;
-
-  u_Log_Debug("Roll Dice %i \n", result);
-
+  
   return result;
 }
 
 void pollAction() {
   setTag("PA");
-  u_Log_Information("Poll Actions \n");
+  u_Log_Verbose("Poll Actions \n");
 
   g_action *current_action = ga_get_next_action();
   setTag("PollAct");
@@ -215,9 +224,11 @@ void pollAction() {
 void ini_text_gamesAssets()
 {
 
-  setTag("Char");
+  setTag("Assets");
 
-  u_Log_Information("Build characters \n");
+  u_Log_Information("Building Game Assets \n");
+
+  u_Log_Verbose("Build Characters \n");
 
   g_character *hero_character = gp_create_character_object(1, "Hero");
 
@@ -234,12 +245,8 @@ void ini_text_gamesAssets()
   g_character *hero_character3 = gp_create_character_object(4, "Villian");
 
   player_fds[3] = gc_add_Character_to_context(hero_character3);
-
-  setTag("");
-
-  setTag("Map");
   
-  u_Log_Information("Build Map Started \n");
+  u_Log_Verbose("Build Map \n");
 
   g_room *room1 = malloc(sizeof(g_room));
   g_room *room2 = malloc(sizeof(g_room));
@@ -257,7 +264,7 @@ void ini_text_gamesAssets()
   gr_ini_room(room5, "Room 5");
   gr_ini_room(room6, "Room 6");
 
-  u_Log_Verbose("Initlize room \n");
+  u_Log_Verbose("Initialize Rooms \n");
 
   room1->directions[EAST] = room2;
   room2->directions[WEST] = room1;
@@ -274,8 +281,8 @@ void ini_text_gamesAssets()
   room5->directions[EAST] = room6;
   room6->directions[WEST] = room5;
 
-  u_Log_Verbose("rooms configured \n");
-
+  u_Log_Verbose("Rooms Connected \n");
+  
   room_fds[0] = gc_add_Room_to_context(room1);
   room_fds[1] = gc_add_Room_to_context(room2);
   room_fds[2] = gc_add_Room_to_context(room3);
@@ -283,13 +290,14 @@ void ini_text_gamesAssets()
   room_fds[4] = gc_add_Room_to_context(room5);
   room_fds[5] = gc_add_Room_to_context(room6);
 
-  u_Log_Verbose("Map built with 6 rooms. \n");
-
-  u_Log_Verbose("loading Players in map \n");
+  u_Log_Verbose("Rooms Added to Context \n");
+  
   gr_room_add_player(room1,hero_character);
   gr_room_add_player(room1,hero_character1);
   gr_room_add_player(room1,hero_character2);
   gr_room_add_player(room1,hero_character3);
+
+  u_Log_Verbose("Characters Added to Room \n");
 
   setTag("");
 }
