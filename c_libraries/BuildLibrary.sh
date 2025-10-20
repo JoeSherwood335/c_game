@@ -56,7 +56,7 @@ echo ""
 echo "\$(LIB)/lib_$lib_name.a: c_libraries/$lib_name/src/$lib_name.c"
 echo " @echo \"Building Library $lib_name\""
 echo " @\$(CXX) \$(CXX_L_FLAGS) -I \$(INCLUDE) $^ -o c_libraries/$lib_name/bin/lib_$lib_name.o"
-echo " @ar rsc $@ c_libraries/$lib_name/bin/lib_$lib_name.o"
+echo " @ar rsc \$@ c_libraries/$lib_name/bin/lib_$lib_name.o"
 echo " @cp c_libraries/$lib_name/src/$lib_name.h \$(INCLUDE)/$lib_name.h"
 echo "***** end makeFile *****"
 
