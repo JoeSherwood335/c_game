@@ -123,8 +123,10 @@ int main() {
       response.c_menu = MAIN;
     }
 
-  } 
-  
+    char ch;
+    while ((ch = getchar()) != '\n' && ch != EOF); // Clear input buffer
+  }
+
   u_Log_Information("Shutting down server... \n");
   pthread_join(heart_beat_thread, NULL);
   u_Log_Information("Heart Beat Thread stopped \n");
