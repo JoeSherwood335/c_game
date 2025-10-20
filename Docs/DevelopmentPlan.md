@@ -12,9 +12,8 @@ game will be a rpg with fantasy elements and engineering elements.
 - ~~put Heartbeat function in Different Thread -MultiThreading Support~~
 - Character to Item Interaction Support - See, Pickup, Drop
 - Character to Character Interaction Support - See, Stop, Talk
+
   
-  
- 
 ## Current
 
 added Multithreading support for heartbeat function
