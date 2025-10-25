@@ -10,6 +10,7 @@ game will be a rpg with fantasy elements and engineering elements.
 - ~~HeartBeat - creating action clock to provide interaction between objects~~
 - ~~ConsoleUi - monitor objects using HeartBeat Function~~
 - ~~put Heartbeat function in Different Thread -MultiThreading Support~~
+- client.c network and ui - example. move
 - Character to Item Interaction Support - See, Pickup, Drop
 - Character to Character Interaction Support - See, Stop, Talk
 
