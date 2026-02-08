@@ -15,16 +15,11 @@ EXECUTABLE_SERVER  := gameServer
 EXECUTABLE_CLIENT  := gameClient
 LIBRARY_GAMEROOM   := gameRoom
 
-all: $(INCLUDE)/gameVars.h	$(LIB)/lib_gameConsoleUI.a	$(LIB)/lib_gameAction.a	$(LIB)/lib_gameCore.a $(LIB)/lib_utilities.a $(LIB)/lib_gameRoom.a $(LIB)/lib_gamePlayer.a $(BIN)/$(EXECUTABLE_SERVER)
-	@echo "All Completed"
+libraries: $(INCLUDE)/gameVars.h	$(LIB)/lib_network.a	$(LIB)/lib_gameConsoleUI.a	$(LIB)/lib_gameAction.a	$(LIB)/lib_gameCore.a $(LIB)/lib_utilities.a $(LIB)/lib_gameRoom.a $(LIB)/lib_gamePlayer.a $(LIB)/lib_network.a 
+	@echo "All Libraries Completed"
 
-rebuild: clean all
+rebuild: clean libraries bin/$(EXECUTABLE_SERVER) bin/$(EXECUTABLE_CLIENT)
 	@echo "Rebuilding all components"
-
-run: clean all
-	clear
-	./$(BIN)/$(EXECUTABLE_SERVER) &
-	./$(BIN)/$(EXECUTABLE_CLIENT) 
 
 $(BIN)/$(EXECUTABLE_SERVER): $(SRC)/g_server.c
 	@echo "Compiling $(EXECUTABLE_SERVER)"
@@ -35,55 +30,67 @@ $(BIN)/$(EXECUTABLE_CLIENT): $(SRC)/g_client.c
 	@$(CXX) $(CXX_FLAGS) -I $(INCLUDE) $^ -o $@ $(LIBRARIES)
 
 $(LIB)/lib_utilities.a:	c_libraries/utilities/src/utilities.c
-	@echo "Building Library utilities"
-	@rm $(INCLUDE)/utilities.h
+	@echo "updating utilities library"
 	@cp c_libraries/utilities/src/utilities.h $(INCLUDE)/utilities.h
 	$(CXX) $(CXX_L_FLAGS) $^ -o c_libraries/utilities/bin/lib_utilities.o 
 	@ar rsc $@ c_libraries/utilities/bin/lib_utilities.o
 	
 $(LIB)/lib_gameRoom.a: c_libraries/gameRoom/src/gameRoom.c
-	@echo "Building Library lib_gameRoom.a"
+	@echo "updating gameRoom library"
+	@cp c_libraries/gameRoom/src/gameRoom.h $(INCLUDE)/gameRoom.h
 	@$(CXX) $(CXX_L_FLAGS) -I $(INCLUDE) $^ -o c_libraries/gameRoom/bin/lib_gameRoom.o 
 	@ar rsc $@ c_libraries/gameRoom/bin/lib_gameRoom.o
-	@cp c_libraries/gameRoom/src/gameRoom.h $(INCLUDE)/gameRoom.h
+	
 
 $(LIB)/lib_gameCore.a: c_libraries/gameCore/src/gameCore.c
-	@echo "Building Library gameCore"
+	@echo "updating Library gameCore"
+	@cp c_libraries/gameCore/src/gameCore.h $(INCLUDE)/gameCore.h
 	@$(CXX) $(CXX_L_FLAGS) -I $(INCLUDE) $^ -o c_libraries/gameCore/bin/lib_gameCore.o 
 	@ar rsc $@ c_libraries/gameCore/bin/lib_gameCore.o
-	@cp c_libraries/gameCore/src/gameCore.h $(INCLUDE)/gameCore.h
+	
 
 $(LIB)/lib_gamePlayer.a: c_libraries/gamePlayer/src/gamePlayer.c
-	@echo "Building Library gamePlayer"
+	@echo "updating Library gamePlayer"
+	@cp c_libraries/gamePlayer/src/gamePlayer.h $(INCLUDE)/gamePlayer.h
 	@$(CXX) $(CXX_L_FLAGS) -I $(INCLUDE) $^ -o c_libraries/gamePlayer/bin/lib_gamePlayer.o 
 	@ar rsc $@ c_libraries/gamePlayer/bin/lib_gamePlayer.o
-	@cp c_libraries/gamePlayer/src/gamePlayer.h $(INCLUDE)/gamePlayer.h
+	
 
 $(LIB)/lib_gameAction.a: c_libraries/gameAction/src/gameAction.c
-	@echo "Building Library gameAction"
+	@echo "updating Library gameAction"
+	@cp c_libraries/gameAction/src/gameAction.h $(INCLUDE)/gameAction.h
 	@$(CXX) $(CXX_L_FLAGS) -I $(INCLUDE) $^ -o c_libraries/gameAction/bin/lib_gameAction.o 
 	@ar rsc $@ c_libraries/gameAction/bin/lib_gameAction.o
-	@cp c_libraries/gameAction/src/gameAction.h $(INCLUDE)/gameAction.h
+	
 
 $(INCLUDE)/gameVars.h: c_libraries/gameVars/src/gameVars.h
-	@echo "Building Library gameVars"
+	@echo "updating Library gameVars"
 	@cp c_libraries/gameVars/src/gameVars.h $(INCLUDE)/gameVars.h
 
 $(LIB)/lib_gameConsoleUI.a:	c_libraries/gameConsoleUI/src/gameConsoleUI.c
-	@echo "Building Library gameConsoleUI"
+	@echo "updating Library gameConsoleUI"
+	@cp c_libraries/gameConsoleUI/src/gameConsoleUI.h $(INCLUDE)/gameConsoleUI.h
 	@$(CXX) $(CXX_L_FLAGS) -I $(INCLUDE) $^ -o c_libraries/gameConsoleUI/bin/lib_gameConsoleUI.o
 	@ar rsc $@ c_libraries/gameConsoleUI/bin/lib_gameConsoleUI.o
-	@cp c_libraries/gameConsoleUI/src/gameConsoleUI.h $(INCLUDE)/gameConsoleUI.h
 
+$(LIB)/lib_network.a:	c_libraries/network/src/network.c
+	@echo "updating Library network"
+	@cp c_libraries/network/src/network.h $(INCLUDE)/network.h
+	@$(CXX) $(CXX_L_FLAGS) -I $(INCLUDE) $^ -o c_libraries/network/bin/lib_network.o
+	@ar rsc $@ c_libraries/network/bin/lib_network.o
 
-runServer:	all
+runServer:	libraries ${BIN}/$(EXECUTABLE_SERVER)
 	@echo "Compiling Libraries and running Server"
 	./$(BIN)/$(EXECUTABLE_SERVER)
 
-debugServer:	all
+debugServer:	libraries ${BIN}/$(EXECUTABLE_SERVER)
 	@echo "Compiling Libraries and running Server in debug mode"
 	@gdb ./$(BIN)/$(EXECUTABLE_SERVER)
 
+client: libraries ${BIN}/$(EXECUTABLE_CLIENT)
+	@echo "Compiling Libraries and running Client"
+	./$(BIN)/$(EXECUTABLE_CLIENT)
+	
 clean:
 	-rm $(BIN)/*
 	-rm $(LIB)/*
