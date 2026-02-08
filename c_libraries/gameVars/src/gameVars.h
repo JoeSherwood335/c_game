@@ -41,6 +41,14 @@ typedef enum {
 typedef struct {
     int id;
     char name[50];
+    char description[100];
+    g_focus_type focus_type;
+} g_item; // Basic item structure
+
+
+typedef struct {
+    int id;
+    char name[50];
     void *current_room;
     void *focus_object;
     g_focus_type focus_type;
@@ -61,13 +69,6 @@ typedef struct {
     g_focus_type focus_type;
     
 } g_room;
-
-typedef struct {
-    int id;
-    char name[50];
-    char description[100];
-    g_focus_type focus_type;
-} g_item; // Basic item structure
 
 typedef struct {
     void *source;
