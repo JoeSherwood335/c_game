@@ -95,7 +95,7 @@ int SendMessage(int socket_descripter, void *buffer, unsigned int bufferSize)
   return messageRValue;
 }
 
-int RecieveMessage(int socket_descripter, void * buffer, unsigned int bufferSize)
+int ReceiveMessage(int socket_descripter, void * buffer, unsigned int bufferSize)
 {
 
   int bytesRecived = recv(socket_descripter, buffer, bufferSize, 0);

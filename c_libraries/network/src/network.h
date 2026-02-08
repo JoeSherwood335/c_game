@@ -32,7 +32,7 @@ int SendMessage(int, void *, unsigned int);
 /// @param cBuffer 
 /// @param bufferSize 
 /// @return number of bytes recieved
-int RecieveMessage(int, void *,  unsigned int);
+int ReceiveMessage(int, void *,  unsigned int);
 
 
 /// @brief Connect Client to Remote Socket
