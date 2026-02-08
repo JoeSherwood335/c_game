@@ -3,47 +3,10 @@
 #include "utilities.h"
 #include "network.h"
 #include "gameVars.h"
+#include <string.h>
 
 #define PORT_NUMBER 3490
-
-int handShake(int server_fd, char * char_name)
-{
-  int br = 0;
-  int strlen = 0;
-
-  for (int i = 0; i < 10; i++)
-  {
-    if (char_name[i] == '\0')
-    {
-      break;
-    }
-    strlen++;
-  }
-  char message[10] = {0};
-  int confirm = 0;
-
-  br = RecieveMessage(server_fd, &message, sizeof message); // recieve welcome message
-
-	if (br == -1)
-  {
-    u_Log_Error("Recieved: %i %s \n", br, message);
-    return -1;
-  }
-
-  u_Log_Information("Recieved: %i %s \n", br, message);
-
-  SendMessage(server_fd, char_name , strlen); // send username
-
-  br = RecieveMessage(server_fd, &confirm, sizeof confirm); // recieve confirm of username
-  
-  if (confirm == -1)
-  {
-    u_Log_Error("Recieved: %i %s \n", br, message);
-    return -1;
-  }
-
-  return 0;
-} 
+#define SERVER_HOST "127.0.0.1"
 
 int main(void)
 {
@@ -54,22 +17,32 @@ int main(void)
 
   u_Log_Information("Program: connected %i \n", sdes);
 
-  char message[10] = {0};
-
-  handShake(sdes, "Joe");
+  char buffer[1024] = {0};
+  int buffer_length = 0;
+  int bytes_received = 0;
   
-  int header = G_HEADER_ROOM_INFO, room_id=100;
+  ReceiveMessage(sdes, &buffer_length, sizeof (int)); // receive welcome message length
+  ReceiveMessage(sdes, (void *) buffer, buffer_length); // receive welcome message
 
-  SendMessage(sdes, &header, sizeof header); // send header to server
-  SendMessage(sdes, &room_id, sizeof (int)); // send header to server
+  u_Log_Information("Program: received message %s \n", buffer);
 
-  g_room *current_room;
+  char username[50] = "HarryDresden";
+  int username_length = strlen(username) + 1;
 
+  u_Log_Information("Program: sending username Length %i \n", username_length);
+  u_Log_Information("Program: sending username %s \n", username);
 
+  SendMessage(sdes, &username_length, sizeof (int)); // send header to server
+  SendMessage(sdes, &username, (sizeof (char)) * username_length); // send header to server
 
-  u_Log_Information("Program: current room %s \n", current_room->description);
+  g_char_descriper char_fd = 0;
 
-  Server_Stop(ldes);
+  bytes_received = ReceiveMessage(sdes, &char_fd, sizeof (g_char_descriper)); // receive character descriptor
+
+  u_Log_Information("Program: received character descriptor %i \n", char_fd);
+
+  scanf("%*c"); // consume newline character left in buffer
+  
   Server_Stop(sdes);
 
   u_Log_Information("Program: End \n");

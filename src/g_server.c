@@ -21,12 +21,21 @@
 #define HEART_BEAT_S_DELAY 0
 #define HEART_BEAT_MM_DELAY 500000000
 
+#define PORT_NUMBER 3490  
+
+
 void ini_text_gamesAssets();
 void moveCharacter(g_character *s_char, g_room *f_room, g_room *t_room);
 void npc_client_Poll_Choices();
 int roll(int dice);
 void pollAction();
 void *Heart_Beat(void *);
+void *client_handler(void *);
+void *Listen_For_Client_Connections(void * isRunning);
+
+
+
+
 
 unsigned int game_is_Running; 
 
@@ -58,10 +67,16 @@ int main() {
 
   ini_text_gamesAssets();
 
-
   void *isRunning = &game_is_Running;
-  pthread_t heart_beat_thread;
+
+  pthread_t heart_beat_thread, client_listen_thread;
+  
   gcui_response response;
+
+  //pthread_attr_init(&heart_beat_thread);
+
+  
+  pthread_create(&client_listen_thread, NULL, Listen_For_Client_Connections, isRunning);
 
   u_Log_Information("Starting Heart Beat Thread \n");
   pthread_create(&heart_beat_thread, NULL, Heart_Beat, isRunning);
@@ -133,7 +148,108 @@ int main() {
   gc_destroy_game_contexts();
 
   return 0;
+
+} // End Main
+
+void *Listen_For_Client_Connections(void * isRunning)
+{
+  
+  unsigned int *game_is_Running_ptr = (unsigned int *)isRunning;  
+  int server_socket_descripter = 0;
+  
+  u_Log_Information("Starting Server Listen for Client Connections \n");
+  
+  Server_Start(&server_socket_descripter, PORT_NUMBER);
+  
+  while(*game_is_Running_ptr == 1){
+    int new_client_socket_descripter = Server_NewConnection(server_socket_descripter);
+    if (new_client_socket_descripter != -1){
+      u_Log_Information("New Client Connected: %i \n", new_client_socket_descripter);
+      pthread_t client_handler_thread;
+      pthread_create(&client_handler_thread, NULL, client_handler, (void *)(size_t)new_client_socket_descripter);
+      if(client_handler_thread == -1){
+        u_Log_Error("Failed to create client handler thread \n");
+      }
+    }
+  }
+  Server_Stop(server_socket_descripter);
+} 
+
+void *client_handler(void *client_socket_descripter)
+{
+  u_Log_Verbose("Client Handler Function Started \n");
+  int client_socket = (int)(size_t)client_socket_descripter;
+  
+  char buffer[1024] = {0};
+  int bytes_received = 0;
+
+  char welcome_message[8] = "Welcome";
+  int username_length = (int)sizeof welcome_message;
+
+  SendMessage(client_socket, &username_length, sizeof username_length); // send welcome message
+  SendMessage(client_socket, &welcome_message, sizeof welcome_message); // send welcome message
+  
+  username_length = 0;
+
+  bytes_received = ReceiveMessage(client_socket, &username_length, sizeof (int)); // receive length of username
+  
+  printf("Username Length: %i \n", username_length);
+
+  bytes_received = ReceiveMessage(client_socket, (void *) buffer, (sizeof (char)) * username_length); // TODO: receive username
+
+  printf("Username: %s \n", buffer);
+
+  g_character *new_character = gp_create_character_object(1, buffer);
+  g_char_descriper new_character_fd = gc_add_Character_to_context(new_character);
+  g_room *starting_room = gc_get_Room_from_context(room_fds[0]);
+  gr_room_add_player(starting_room, new_character);
+
+  player_fds[new_character_fd] = new_character_fd;
+
+  SendMessage(client_socket, &new_character_fd, sizeof new_character_fd); // send character descriptor to client
+
+  while(game_is_Running == 1){
+  
+  }
+
+  printf("Client Handler Function Ending \n");
+
+  Server_Stop(client_socket);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 void *Heart_Beat(void * isRunning)
@@ -171,6 +287,9 @@ void npc_client_Poll_Choices()
 
     u_Log_Debug("for loop x = %i \n", x);
     g_character *character = gc_get_Character_from_context(x);
+    if (character == NULL){
+      continue;
+    }
     g_room *cr = (g_room *)character->current_room;
 
     for(int y = 0; y<SEARCH_MAX_DIRECTION-1; y++){
@@ -303,5 +422,4 @@ void ini_text_gamesAssets()
 
   setTag("");
 }
-
 
